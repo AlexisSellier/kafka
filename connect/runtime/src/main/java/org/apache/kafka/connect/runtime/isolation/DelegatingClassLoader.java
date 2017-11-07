@@ -139,6 +139,7 @@ public class DelegatingClassLoader extends URLClassLoader {
     }
 
     protected void initLoaders() {
+	log.info("IN DelegatingClassLoader initLaoders");
         String path = null;
         try {
             for (String configPath : pluginPaths) {
@@ -159,6 +160,7 @@ public class DelegatingClassLoader extends URLClassLoader {
 
             path = "classpath";
             // Finally add parent/system loader.
+	    log.info("IN DelegatingClassLoader before scanUrlsAndAddPlugins");
             scanUrlsAndAddPlugins(
                     getParent(),
                     ClasspathHelper.forJavaClassPath().toArray(new URL[0]),
@@ -171,6 +173,7 @@ public class DelegatingClassLoader extends URLClassLoader {
         } catch (InstantiationException | IllegalAccessException e) {
             log.error("Could not instantiate plugins in: {}. Ignoring: {}", path, e);
         }
+	
         addAllAliases();
     }
 
@@ -198,6 +201,7 @@ public class DelegatingClassLoader extends URLClassLoader {
             URL[] urls,
             Path pluginLocation
     ) throws InstantiationException, IllegalAccessException {
+	log.info("Before scanPluginPath");
         PluginScanResult plugins = scanPluginPath(loader, urls);
         log.info("Registered loader: {}", loader);
         if (!plugins.isEmpty()) {
@@ -252,6 +256,7 @@ public class DelegatingClassLoader extends URLClassLoader {
             ClassLoader loader,
             URL[] urls
     ) throws InstantiationException, IllegalAccessException {
+	log.info("PluginScanResult ");
         ConfigurationBuilder builder = new ConfigurationBuilder();
         builder.setClassLoaders(new ClassLoader[]{loader});
         builder.addUrls(urls);

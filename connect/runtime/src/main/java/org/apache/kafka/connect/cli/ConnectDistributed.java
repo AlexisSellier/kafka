@@ -68,25 +68,36 @@ public class ConnectDistributed {
 
         log.info("Scanning for plugin classes. This might take a moment ...");
         Plugins plugins = new Plugins(workerProps);
+	log.info("Before compare and swap");
         plugins.compareAndSwapWithDelegatingLoader();
+	log.info("Before new DistributedConfig");
         DistributedConfig config = new DistributedConfig(workerProps);
 
+	log.info("Before new RestServer");
         RestServer rest = new RestServer(config);
         URI advertisedUrl = rest.advertisedUrl();
         String workerId = advertisedUrl.getHost() + ":" + advertisedUrl.getPort();
 
+	log.info("Before new KafkaOffsetBackingStore");
         KafkaOffsetBackingStore offsetBackingStore = new KafkaOffsetBackingStore();
+	log.info("Before KafkaOffsetBackingStore configure");
         offsetBackingStore.configure(config);
 
+	log.info("Before new Worker");
         Worker worker = new Worker(workerId, time, plugins, config, offsetBackingStore);
 
+	log.info("Before new KafkaStatusBackingStore");
         StatusBackingStore statusBackingStore = new KafkaStatusBackingStore(time, worker.getInternalValueConverter());
+	log.info("Before KafkaStatusBackingStore Config");
         statusBackingStore.configure(config);
-
+	
+	log.info("Before new kafkaConfigBackingStore");
         ConfigBackingStore configBackingStore = new KafkaConfigBackingStore(worker.getInternalValueConverter(), config);
 
+	log.info("Before new DistributedHerder");
         DistributedHerder herder = new DistributedHerder(config, time, worker, statusBackingStore, configBackingStore,
                 advertisedUrl.toString());
+	log.info("Before new Connect");
         final Connect connect = new Connect(herder, rest);
         log.info("Kafka Connect distributed worker initialization took {}ms", time.hiResClockMs() - initStart);
         try {

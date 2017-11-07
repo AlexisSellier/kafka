@@ -43,7 +43,9 @@ public class Plugins {
 
     public Plugins(Map<String, String> props) {
         List<String> pluginLocations = WorkerConfig.pluginLocations(props);
+	log.info("IN plugins:  before newDelegatingClassLoader");
         delegatingLoader = newDelegatingClassLoader(pluginLocations);
+	log.info("IN plugins:  before initLoaders");
         delegatingLoader.initLoaders();
     }
 
@@ -52,6 +54,7 @@ public class Plugins {
                 new PrivilegedAction() {
                     @Override
                     public Object run() {
+			log.info("IN plugins:  new DelegatingClassLoader");
                         return new DelegatingClassLoader(paths);
                     }
                 }
